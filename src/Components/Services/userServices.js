@@ -18,10 +18,10 @@ export const addUser = async (userData) => {
 };
 
 export const updateUser = async (id, userData) => {
-  const response = await fetch(`${API_URL}`, {
+  const response = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id, ...userData }),
+    body: JSON.stringify({...userData }),
   });
 
   if (!response.ok) throw new Error("Failed to update user");
@@ -29,7 +29,7 @@ export const updateUser = async (id, userData) => {
 };
 
 export const deleteUser = async (id) => {
-  const response = await fetch(`${API_URL}?id=${id}`, {
+  const response = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
   });

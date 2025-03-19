@@ -3,20 +3,26 @@ import { Grid, Card, CardContent, Typography, Box, CircularProgress } from "@mui
 import Sidebar from "@/Components/Common/Sidebar";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 import { fetchDashboardCounts } from "@/Components/Services/dashboardService";
-import { fetchProductActivityData } from "@/Components/Services/chartServiceProduct";
-import { fetchChartData } from "@/Components/Services/chartService";
 
 export default function Dashboard() {
-  const [analytics, setAnalytics] = useState(null);
-  const [userChartData, setUserChartData] = useState([]);
-  const [productChartData, setProductChartData] = useState([]);
+  const [analytics, setAnalytics] = useState({
+    totalUsers: 0,
+    totalProducts: 0,
+    userActivity: [],
+    productActivity: [],
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getDashboardCounts = async () => {
       try {
         const data = await fetchDashboardCounts();
-        setAnalytics(data);
+        setAnalytics({
+          totalUsers: data.totalUsers,
+          totalProducts: data.totalProducts,
+          userActivity: data.userActivity,
+          productActivity: data.productActivity,
+        });
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -24,40 +30,18 @@ export default function Dashboard() {
       }
     };
 
-    const getUserChartData = async () => {
-      try {
-        const data = await fetchChartData();
-        setUserChartData(data);
-      } catch (error) {
-        console.error("Error fetching user chart data:", error);
-      }
-    };
-
-    const getProductChartData = async () => {
-      try {
-        const data = await fetchProductActivityData();
-        setProductChartData(data);
-      } catch (error) {
-        console.error("Error fetching product chart data:", error);
-      }
-    };
-
     getDashboardCounts();
-    getUserChartData();
-    getProductChartData();
   }, []);
 
   return (
     <Box sx={{ display: "flex" }}>
       <Sidebar />
 
-      {/* Main Content */}
       <Box component="main" sx={{ flexGrow: 1, padding: "20px" }}>
         <Typography variant="h4" gutterBottom>
           Dashboard
         </Typography>
 
-        {/* Loading State */}
         {loading ? (
           <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
             <CircularProgress />
@@ -66,19 +50,21 @@ export default function Dashboard() {
           <>
             {/* Stats Cards */}
             <Grid container spacing={3}>
-              {analytics &&
-                Object.entries(analytics).map(([key, value]) => (
-                  <Grid item xs={12} sm={6} md={6} key={key}>
-                    <Card sx={{ backgroundColor: "#f5f5f5", boxShadow: 3 }}>
-                      <CardContent>
-                        <Typography variant="h6" color="textSecondary">
-                          {key.replace(/([A-Z])/g, " $1").trim()}
-                        </Typography>
-                        <Typography variant="h4">{value}</Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
+              {[
+                { label: "Total Users", value: analytics.totalUsers },
+                { label: "Total Products", value: analytics.totalProducts },
+              ].map((stat, index) => (
+                <Grid item xs={12} sm={6} key={index}>
+                  <Card sx={{ backgroundColor: "#f5f5f5", boxShadow: 3 }}>
+                    <CardContent>
+                      <Typography variant="h6" color="textSecondary">
+                        {stat.label}
+                      </Typography>
+                      <Typography variant="h4">{stat.value}</Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
             </Grid>
 
             {/* User Activity Chart */}
@@ -87,7 +73,7 @@ export default function Dashboard() {
                 User Activity
               </Typography>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={userChartData}>
+                <LineChart data={analytics.userActivity}>
                   <XAxis dataKey="day" />
                   <YAxis />
                   <Tooltip />
@@ -103,7 +89,7 @@ export default function Dashboard() {
                 Product Activity
               </Typography>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={productChartData}>
+                <LineChart data={analytics.productActivity}>
                   <XAxis dataKey="day" />
                   <YAxis />
                   <Tooltip />

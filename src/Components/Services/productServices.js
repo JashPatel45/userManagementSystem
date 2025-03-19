@@ -18,10 +18,10 @@ export const addProduct = async (productData) => {
 };
 
 export const updateProduct = async (productId, productData) => {
-  const response = await fetch(`${API_URL}`, { // Use dynamic URL
+  const response = await fetch(`${API_URL}/${productId}`, { // Use dynamic URL
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({...productData,productId}),
+    body: JSON.stringify({...productData}),
   });
 
   if (!response.ok) throw new Error("Failed to update product");
@@ -29,7 +29,7 @@ export const updateProduct = async (productId, productData) => {
 };
 
 export const deleteProduct = async (productId) => {  
-  const response = await fetch(`${API_URL}?productId=${productId}`, { // Use dynamic URL
+  const response = await fetch(`${API_URL}/${productId}`, { // Use dynamic URL
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
   });
