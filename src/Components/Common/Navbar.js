@@ -1,15 +1,32 @@
 import { AppBar, Toolbar, Typography, Button, Container } from "@mui/material";
+import { useRouter } from "next/router"; // Import useRouter for navigation
 
 export default function Navbar() {
+  const router = useRouter(); // Initialize router
+
+  const handleNavigation = (path) => {
+    router.push(path); // Navigate to the specified path
+  };
+
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: "#1976d2" }}>
       <Container>
-        <Toolbar>
-          <Typography variant="h4" sx={{ flexGrow: 1 }}>
-            User Management
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography variant="h6" sx={{ cursor: "pointer" }} onClick={() => handleNavigation("/")}>
+            YEHHHHHH
           </Typography>
-          <Button color="inherit">Home</Button>
-          <Button color="inherit">Users</Button>
+          <div>
+            <Button color="inherit" onClick={() => handleNavigation("/")}>
+              Home
+            </Button>
+            <Button color="inherit" onClick={() => handleNavigation("/products")}>
+              Products
+            </Button>
+            <Button color="inherit" onClick={() => handleNavigation("/users")}>
+              Users
+            </Button>
+            {/* Add more buttons as needed */}
+          </div>
         </Toolbar>
       </Container>
     </AppBar>

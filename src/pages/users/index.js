@@ -22,6 +22,7 @@ import {
   Grid,
   Card,
   CardContent,
+  Breadcrumbs,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -30,6 +31,8 @@ import { toast, Toaster } from "react-hot-toast";
 import Navbar from "@/Components/Common/Navbar";
 import Sidebar from "@/Components/Common/Sidebar";
 import { getUsers, addUser, updateUser, deleteUser } from "../../Components/Services/userServices";
+import DeleteModal from "@/Components/Common/Delete";
+import BreadcrumbsNav from "@/Components/Common/Breadcrumb";
 
 export default function UserList() {
   const [users, setUsers] = useState([]);
@@ -41,6 +44,8 @@ export default function UserList() {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [editingUser, setEditingUser] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -80,11 +85,12 @@ export default function UserList() {
     }
   };
 
-  const handleDeleteUser = async (id) => {
+  const handleDeleteUser = async () => {
     try {
-      await deleteUser(id);
-      setUsers(users.filter(user => user._id !== id));
+      await deleteUser(selectedUserId);
+      setUsers(users.filter(user => user._id !== selectedUserId));
       toast.success("User deleted successfully!");
+      setIsModalOpen(false);
     } catch (err) {
       toast.error(err.message);
     }
@@ -128,17 +134,16 @@ export default function UserList() {
   return (
     <>
       <Sidebar />
+      <Navbar />
       <Container maxWidth="lg" sx={{ mt: 5 }}>
+        <BreadcrumbsNav title="Users Management"/>
         <Toaster />
-        <Typography variant="h4" gutterBottom textAlign="center" fontWeight="bold">
-          Users Management
-        </Typography>
 
         {loading && <CircularProgress sx={{ display: "block", margin: "20px auto" }} />}
         {error && <Alert severity="error">{error}</Alert>}
 
         <Grid container justifyContent="flex-end" sx={{ mb: 2 }}>
-          <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => setOpen(true)}>
+          <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
             Add User
           </Button>
         </Grid>
@@ -165,7 +170,13 @@ export default function UserList() {
                         <IconButton color="primary" onClick={() => openEditModal(user)}>
                           <EditIcon />
                         </IconButton>
-                        <IconButton color="error" onClick={() => handleDeleteUser(user._id)}>
+                        <IconButton
+                          color="error"
+                          onClick={() => {
+                            setSelectedUserId(user._id);
+                            setIsModalOpen(true);
+                          }}
+                        >
                           <DeleteIcon />
                         </IconButton>
                       </TableCell>
@@ -189,6 +200,13 @@ export default function UserList() {
             <Button onClick={editingUser ? handleUpdateUser : handleAddUser} color="primary" variant="contained">{editingUser ? "Update" : "Add"}</Button>
           </DialogActions>
         </Dialog>
+
+        <DeleteModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onConfirm={handleDeleteUser}
+        />
+
       </Container>
     </>
   );

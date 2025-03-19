@@ -29,6 +29,8 @@ import { toast, Toaster } from "react-hot-toast";
 import Navbar from "@/Components/Common/Navbar";
 import Sidebar from "@/Components/Common/Sidebar";
 import { getProducts, addProduct, updateProduct, deleteProduct } from "../../Components/Services/productServices";
+import DeleteModal from "@/Components/Common/Delete";
+import BreadcrumbsNav from "@/Components/Common/Breadcrumb";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
@@ -40,6 +42,8 @@ export default function ProductList() {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [editingProduct, setEditingProduct] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -84,6 +88,7 @@ export default function ProductList() {
       await deleteProduct(id);
       setProducts(products.filter(product => product._id !== id));
       toast.success("Product deleted successfully!");
+      setIsModalOpen(false);
     } catch (err) {
       toast.error(err.message);
     }
@@ -119,17 +124,16 @@ export default function ProductList() {
   return (
     <>
       <Sidebar />
+      <Navbar />
       <Container maxWidth="lg" sx={{ mt: 5 }}>
+      <BreadcrumbsNav title="Products Management"/>
         <Toaster />
-        <Typography variant="h4" gutterBottom textAlign="center" fontWeight="bold">
-          Products Management
-        </Typography>
 
         {loading && <CircularProgress sx={{ display: "block", margin: "20px auto" }} />}
         {error && <Alert severity="error">{error}</Alert>}
 
         <Grid container justifyContent="flex-end" sx={{ mb: 2 }}>
-          <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => setOpen(true)}>
+          <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
             Add Product
           </Button>
         </Grid>
@@ -156,7 +160,13 @@ export default function ProductList() {
                         <IconButton color="primary" onClick={() => openEditModal(product)}>
                           <EditIcon />
                         </IconButton>
-                        <IconButton color="error" onClick={() => handleDeleteProduct(product._id)}>
+                        <IconButton
+                          color="error"
+                          onClick={() => {
+                            setSelectedProductId(product._id);
+                            setIsModalOpen(true);
+                          }}
+                        >
                           <DeleteIcon />
                         </IconButton>
                       </TableCell>
@@ -180,6 +190,13 @@ export default function ProductList() {
             <Button onClick={editingProduct ? handleUpdateProduct : handleAddProduct} color="primary" variant="contained">{editingProduct ? "Update" : "Add"}</Button>
           </DialogActions>
         </Dialog>
+
+        <DeleteModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onConfirm={() => handleDeleteProduct(selectedProductId)} // Ensure id is passed
+        />
+
       </Container>
     </>
   );
