@@ -133,7 +133,7 @@ export default function UserList() {
 
   return (
     <>
-      <Sidebar />
+      {/* <Sidebar /> */}
       <Navbar />
       <Container maxWidth="lg" sx={{ mt: 5 }}>
         <BreadcrumbsNav title="Users Management"/>

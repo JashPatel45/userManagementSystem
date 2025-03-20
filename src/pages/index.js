@@ -39,7 +39,7 @@ export default function Dashboard() {
     <>
       <Navbar />
       <Box sx={{ display: "flex" }}>
-        <Sidebar />
+        {/* <Sidebar /> */}
         <Box component="main" sx={{ flexGrow: 1, padding: "20px" }}>
           <BreadcrumbsNav title="Dashboard" />
 

@@ -28,6 +28,7 @@ export default function Sidebar() {
         variant="permanent" // Use permanent variant for a fixed drawer
         open={open}
         sx={{
+          backgroundColor: "#5E9DD7",
           width: open ? 240 : 60,
           flexShrink: 0,
           "& .MuiDrawer-paper": {

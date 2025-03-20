@@ -16,13 +16,9 @@ export default function BreadcrumbsNav({ title }) {
       </Typography>
 
       {/* Breadcrumbs on the right */}
-      <Breadcrumbs
-        separator={<NavigateNextIcon fontSize="small" />}
-        aria-label="breadcrumb"
-      >
+      <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
         <Link href="/" passHref>
           <Typography
-            component="a"
             style={{
               textDecoration: "none",
               display: "flex",
@@ -42,7 +38,7 @@ export default function BreadcrumbsNav({ title }) {
             </Typography>
           ) : (
             <Link key={to} href={to} passHref>
-              <Typography component="a" style={{ textDecoration: "none", color: "inherit" }}>
+              <Typography style={{ textDecoration: "none", color: "inherit" }}>
                 {decodeURIComponent(value)}
               </Typography>
             </Link>

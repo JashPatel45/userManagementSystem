@@ -123,7 +123,7 @@ export default function ProductList() {
 
   return (
     <>
-      <Sidebar />
+      {/* <Sidebar /> */}
       <Navbar />
       <Container maxWidth="lg" sx={{ mt: 5 }}>
       <BreadcrumbsNav title="Products Management"/>
