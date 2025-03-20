@@ -1,5 +1,6 @@
 import dbConnect from "@/db/db";
 import Product from "@/models/Product";
+import formatResponse from "@/Middleware/formatDateMiddleware";
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -7,7 +8,7 @@ export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       const products = await Product.find();
-      return res.status(200).json(products);
+      return formatResponse(res, products); // Format response with formatted dates
     }
 
     if (req.method === "POST") {
@@ -19,7 +20,7 @@ export default async function handler(req, res) {
 
       const newProduct = new Product({ productCode, productName, baseUom });
       await newProduct.save();
-      return res.status(201).json(newProduct);
+      return formatResponse(res, newProduct); // Format response after saving product
     }
 
     res.status(405).json({ error: "Method Not Allowed" });

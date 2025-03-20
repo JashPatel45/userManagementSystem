@@ -9,7 +9,7 @@ export default function Navbar() {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "#5E9DD7" }}>
+    <AppBar position="sticky" sx={{ backgroundColor: "#5E9DD7" }}>
       <Container>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography variant="h6" sx={{ cursor: "pointer" }} onClick={() => handleNavigation("/")}>

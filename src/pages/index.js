@@ -38,9 +38,9 @@ export default function Dashboard() {
   return (
     <>
       <Navbar />
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", bgcolor: "#f4f6f8", minHeight: "100vh" }}>
         {/* <Sidebar /> */}
-        <Box component="main" sx={{ flexGrow: 1, padding: "20px" }}>
+        <Box component="main" sx={{ flexGrow: 1, padding: "24px" }}>
           <BreadcrumbsNav title="Dashboard" />
 
           {loading ? (
@@ -50,55 +50,74 @@ export default function Dashboard() {
           ) : (
             <>
               {/* Stats Cards */}
-              <Grid container spacing={3}>
+              <Grid container spacing={3} sx={{ mb: 3 }}>
                 {[
-                  { label: "Total Users", value: analytics.totalUsers },
-                  { label: "Total Products", value: analytics.totalProducts },
+                  { label: "Total Users", value: analytics.totalUsers, color: "#3f51b5" },
+                  { label: "Total Products", value: analytics.totalProducts, color: "#ff5722" },
                 ].map((stat, index) => (
                   <Grid item xs={12} sm={6} key={index}>
-                    <Card sx={{ backgroundColor: "#f5f5f5", boxShadow: 3 }}>
+                    <Card
+                      sx={{
+                        backgroundColor: "#fff",
+                        boxShadow: 4,
+                        borderLeft: `6px solid ${stat.color}`,
+                        transition: "0.3s",
+                        "&:hover": { transform: "scale(1.03)" },
+                      }}
+                    >
                       <CardContent>
                         <Typography variant="h6" color="textSecondary">
                           {stat.label}
                         </Typography>
-                        <Typography variant="h4">{stat.value}</Typography>
+                        <Typography variant="h4" sx={{ fontWeight: "bold", color: stat.color }}>
+                          {stat.value}
+                        </Typography>
                       </CardContent>
                     </Card>
                   </Grid>
                 ))}
               </Grid>
 
-              {/* User Activity Chart */}
-              <Card sx={{ marginTop: "20px", padding: "20px", boxShadow: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  User Activity
-                </Typography>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={analytics.userActivity}>
-                    <XAxis dataKey="day" />
-                    <YAxis />
-                    <Tooltip />
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <Line type="monotone" dataKey="count" stroke="#3f51b5" strokeWidth={3} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </Card>
+              {/* Charts Grid */}
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ boxShadow: 4, borderRadius: "12px" }}>
+                    <CardContent>
+                      <Typography variant="h6" sx={{ mb: 2 }}>
+                        User Activity
+                      </Typography>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={analytics.userActivity}>
+                          <XAxis dataKey="day" stroke="#8884d8" />
+                          <YAxis stroke="#8884d8" />
+                          <Tooltip />
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <Line type="monotone" dataKey="count" stroke="#3f51b5" strokeWidth={3} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                </Grid>
 
-              {/* Product Activity Chart */}
-              <Card sx={{ marginTop: "20px", padding: "20px", boxShadow: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Product Activity
-                </Typography>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={analytics.productActivity}>
-                    <XAxis dataKey="day" />
-                    <YAxis />
-                    <Tooltip />
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <Line type="monotone" dataKey="count" stroke="#ff5722" strokeWidth={3} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </Card>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ boxShadow: 4, borderRadius: "12px" }}>
+                    <CardContent>
+                      <Typography variant="h6" sx={{ mb: 2 }}>
+                        Product Activity
+                      </Typography>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={analytics.productActivity}>
+                          <XAxis dataKey="day" stroke="#ff5722" />
+                          <YAxis stroke="#ff5722" />
+                          <Tooltip />
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <Line type="monotone" dataKey="count" stroke="#ff5722" strokeWidth={3} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
             </>
           )}
         </Box>

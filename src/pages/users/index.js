@@ -153,6 +153,7 @@ export default function UserList() {
                     <TableCell><b>Name</b></TableCell>
                     <TableCell><b>Email</b></TableCell>
                     <TableCell><b>Mobile</b></TableCell>
+                    <TableCell><b>Date and Time</b></TableCell>
                     <TableCell><b>Actions</b></TableCell>
                   </TableRow>
                 </TableHead>
@@ -162,6 +163,7 @@ export default function UserList() {
                       <TableCell>{user.name}</TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>{user.mobile}</TableCell>
+                      <TableCell>{user.createdAt}</TableCell>
                       <TableCell>
                         <IconButton color="primary" onClick={() => openEditModal(user)}>
                           <EditIcon />

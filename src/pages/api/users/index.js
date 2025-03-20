@@ -1,5 +1,6 @@
 import dbConnect from "@/db/db";
 import Users from "@/models/Users";
+import formatUserResponse from "@/Middleware/formatDateMiddleware";
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -7,7 +8,7 @@ export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       const users = await Users.find();
-      return res.status(200).json(users);
+      return formatUserResponse(res, users); // Apply middleware after fetching data
     }
 
     if (req.method === "POST") {
@@ -17,7 +18,7 @@ export default async function handler(req, res) {
       }
 
       const newUser = await Users.create({ name, email, mobile });
-      return res.status(201).json(newUser);
+      return formatUserResponse(res, newUser); // Apply middleware to format response
     }
 
     return res.status(405).json({ error: "Method Not Allowed" });

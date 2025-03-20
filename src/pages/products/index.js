@@ -145,6 +145,7 @@ export default function ProductList() {
                     <TableCell><b>Product Code</b></TableCell>
                     <TableCell><b>Product Name</b></TableCell>
                     <TableCell><b>Base UOM</b></TableCell>
+                    <TableCell><b>Date and Time</b></TableCell>
                     <TableCell><b>Actions</b></TableCell>
                   </TableRow>
                 </TableHead>
@@ -154,6 +155,7 @@ export default function ProductList() {
                       <TableCell>{product.productCode}</TableCell>
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.baseUom}</TableCell>
+                      <TableCell>{product.createdAt}</TableCell>
                       <TableCell>
                         <IconButton color="primary" onClick={() => openEditModal(product)}>
                           <EditIcon />
