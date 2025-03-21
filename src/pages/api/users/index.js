@@ -12,12 +12,12 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST") {
-      const { name, email, mobile } = req.body;
-      if (!name || !email || !mobile) {
-        return res.status(400).json({ error: "Name, Mobile, and Email are required" });
+      const { name, email, mobile, password } = req.body;
+      if (!name || !email || !mobile || !password) {
+        return res.status(400).json({ error: "Name, Mobile, Password and Email are required" });
       }
 
-      const newUser = await Users.create({ name, email, mobile });
+      const newUser = await Users.create({ name, email, mobile, password });
       return formatUserResponse(res, newUser); // Apply middleware to format response
     }
 

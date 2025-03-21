@@ -8,14 +8,14 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === "PUT") {
-      const { name, email, mobile } = req.body;
-      if (!id || !name || !email || !mobile) {
+      const { name, email, mobile, password } = req.body;
+      if (!id || !name || !email || !mobile || !password) {
         return res.status(400).json({ error: "ID, Name, Email, and Mobile are required" });
       }
 
       const updatedUser = await Users.findByIdAndUpdate(
         id,
-        { name, email, mobile },
+        { name, email, mobile, password },
         { new: true, runValidators: true }
       );
 

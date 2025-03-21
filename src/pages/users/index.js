@@ -37,6 +37,7 @@ export default function UserList() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
+  const [password, setPassword] = useState("");
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [editingUser, setEditingUser] = useState(null);
@@ -60,7 +61,7 @@ export default function UserList() {
   const handleAddUser = async () => {
     if (!validate()) return;
     try {
-      const newUser = await addUser({ name, email, mobile });
+      const newUser = await addUser({ name, email, mobile, password });
       setUsers([...users, newUser]);
       closeModal();
       toast.success("User added successfully!");
@@ -72,8 +73,8 @@ export default function UserList() {
   const handleUpdateUser = async () => {
     if (!validate()) return;
     try {
-      await updateUser(editingUser._id, { name, email, mobile });
-      setUsers(users.map(user => user._id === editingUser._id ? { ...user, name, email, mobile } : user));
+      await updateUser(editingUser._id, { name, email, mobile, password });
+      setUsers(users.map(user => user._id === editingUser._id ? { ...user, name, email, mobile, password } : user));
       closeModal();
       toast.success("User updated successfully!");
     } catch (err) {
@@ -95,6 +96,7 @@ export default function UserList() {
   const validate = () => {
     let tempErrors = {};
     if (!name.trim()) tempErrors.name = "Name is required.";
+    if (!password.trim()) tempErrors.password = "Password is required.";
     if (!email.trim()) {
       tempErrors.email = "Email is required.";
     } else if (!/\S+@\S+\.\S+/.test(email)) {
@@ -115,6 +117,7 @@ export default function UserList() {
     setName(user.name);
     setEmail(user.email);
     setMobile(user.mobile);
+    setPassword(user.password);
     setOpen(true);
   };
 
@@ -123,6 +126,7 @@ export default function UserList() {
     setName("");
     setEmail("");
     setMobile("");
+    setPassword("");
     setOpen(false);
     setErrors({});
   };
@@ -191,7 +195,8 @@ export default function UserList() {
           <DialogContent>
             <TextField label="Name" fullWidth value={name} onChange={(e) => setName(e.target.value)} error={!!errors.name} helperText={errors.name} sx={{ mb: 2 }} />
             <TextField label="Email" fullWidth value={email} onChange={(e) => setEmail(e.target.value)} error={!!errors.email} helperText={errors.email} sx={{ mb: 2 }} />
-            <TextField label="Mobile" fullWidth value={mobile} onChange={(e) => setMobile(e.target.value)} error={!!errors.mobile} helperText={errors.mobile} />
+            <TextField label="Mobile" fullWidth value={mobile} onChange={(e) => setMobile(e.target.value)} error={!!errors.mobile} helperText={errors.mobile} sx={{ mb: 2 }} />
+            <TextField label="Password" fullWidth value={password} onChange={(e) => setPassword(e.target.value)} error={!!errors.password} helperText={errors.password} />
           </DialogContent>
           <DialogActions>
             <Button onClick={closeModal} color="secondary">Cancel</Button>

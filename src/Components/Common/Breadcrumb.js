@@ -26,8 +26,8 @@ export default function BreadcrumbsNav({ title }) {
               color: "inherit",
             }}
           >
-            <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
-            Home
+            {/* <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" /> */}
+            Dashboard
           </Typography>
         </Link>
         {pathnames.map((value, index) => {

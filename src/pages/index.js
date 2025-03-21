@@ -1,127 +1,140 @@
 import { useState, useEffect } from "react";
-import { Grid, Card, CardContent, Typography, Box, CircularProgress } from "@mui/material";
-import Sidebar from "@/Components/Common/Sidebar";
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
-import { fetchDashboardCounts } from "@/Components/Services/dashboardService";
-import BreadcrumbsNav from "@/Components/Common/Breadcrumb";
-import Navbar from "@/Components/Common/Navbar";
+import { Card, CardContent, CardHeader } from "@mui/material";
+import { TextField, Button, Typography, Box } from "@mui/material";
+import { useRouter } from "next/router";
+import { loginUser } from "@/Components/Services/authServices";
 
-export default function Dashboard() {
-  const [analytics, setAnalytics] = useState({
-    totalUsers: 0,
-    totalProducts: 0,
-    userActivity: [],
-    productActivity: [],
-  });
-  const [loading, setLoading] = useState(true);
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const router = useRouter();
+
+  // const handleLogin = async () => {
+  //   if (!email || !password) {
+  //     setError("Please fill in all fields.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch("/api/auth/login", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ email, password }),
+  //     });
+
+  //     if (!response.ok) {
+  //       const data = await response.json();
+  //       throw new Error(data.error || "Login failed");
+  //     }
+
+  //     const data = await response.json();
+  //     // Redirect to dashboard on successful login
+  //     router.push("/dashboard");
+  //   } catch (err) {
+  //     setError(err.message);
+  //   }
+  // };
 
   useEffect(() => {
-    const getDashboardCounts = async () => {
-      try {
-        const data = await fetchDashboardCounts();
-        setAnalytics({
-          totalUsers: data.totalUsers,
-          totalProducts: data.totalProducts,
-          userActivity: data.userActivity,
-          productActivity: data.productActivity,
-        });
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getDashboardCounts();
+    const savedUser = JSON.parse(localStorage.getItem("userData"));
+    if (savedUser) {
+      setEmail(savedUser.email);
+      setPassword(savedUser.password);
+    }
   }, []);
 
+  const handleLogin = async () => {
+    let valid = true;
+
+    // Reset errors
+    setEmailError("");
+    setPasswordError("");
+
+    // Email validation
+    if (!email) {
+      setEmailError("Email is required.");
+      valid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError("Invalid email format.");
+      valid = false;
+    }
+
+    // Password validation
+    if (!password) {
+      setPasswordError("Password is required.");
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    try {
+      const user = await loginUser(email, password);
+
+      // Save user data in local storage
+      localStorage.setItem("userData", JSON.stringify({ email, password }));
+
+      router.push("/dashboard");
+    } catch (err) {
+      setPasswordError(err.message); // Show error below password field
+    }
+  };
+  
+
   return (
-    <>
-      <Navbar />
-      <Box sx={{ display: "flex", bgcolor: "#f4f6f8", minHeight: "100vh" }}>
-        {/* <Sidebar /> */}
-        <Box component="main" sx={{ flexGrow: 1, padding: "24px" }}>
-          <BreadcrumbsNav title="Dashboard" />
-
-          {loading ? (
-            <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
-              <CircularProgress />
-            </Box>
-          ) : (
-            <>
-              {/* Stats Cards */}
-              <Grid container spacing={3} sx={{ mb: 3 }}>
-                {[
-                  { label: "Total Users", value: analytics.totalUsers, color: "#3f51b5" },
-                  { label: "Total Products", value: analytics.totalProducts, color: "#ff5722" },
-                ].map((stat, index) => (
-                  <Grid item xs={12} sm={6} key={index}>
-                    <Card
-                      sx={{
-                        backgroundColor: "#fff",
-                        boxShadow: 4,
-                        borderLeft: `6px solid ${stat.color}`,
-                        transition: "0.3s",
-                        "&:hover": { transform: "scale(1.03)" },
-                      }}
-                    >
-                      <CardContent>
-                        <Typography variant="h6" color="textSecondary">
-                          {stat.label}
-                        </Typography>
-                        <Typography variant="h4" sx={{ fontWeight: "bold", color: stat.color }}>
-                          {stat.value}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-
-              {/* Charts Grid */}
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <Card sx={{ boxShadow: 4, borderRadius: "12px" }}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ mb: 2 }}>
-                        User Activity
-                      </Typography>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={analytics.userActivity}>
-                          <XAxis dataKey="day" stroke="#8884d8" />
-                          <YAxis stroke="#8884d8" />
-                          <Tooltip />
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <Line type="monotone" dataKey="count" stroke="#3f51b5" strokeWidth={3} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </CardContent>
-                  </Card>
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                  <Card sx={{ boxShadow: 4, borderRadius: "12px" }}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ mb: 2 }}>
-                        Product Activity
-                      </Typography>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={analytics.productActivity}>
-                          <XAxis dataKey="day" stroke="#ff5722" />
-                          <YAxis stroke="#ff5722" />
-                          <Tooltip />
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <Line type="monotone" dataKey="count" stroke="#ff5722" strokeWidth={3} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              </Grid>
-            </>
-          )}
-        </Box>
-      </Box>
-    </>
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      minHeight="97vh"
+      // sx={{ background: "linear-gradient(to right, #6a11cb, #2575fc)" }}
+      sx={{
+        backgroundImage: "url('/Background1.jfif')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <Card sx={{ width: 400, padding: 4, boxShadow: 6, borderRadius: 3, bgcolor: "white" }}>
+        <CardHeader
+          title={<Typography variant="h5" align="center" fontWeight="bold" color="primary">Login</Typography>}
+        />
+        <CardContent>
+          <Box display="flex" flexDirection="column" gap={2}>
+            <TextField
+              fullWidth
+              type="email"
+              label="Email"
+              variant="outlined"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={!!emailError}
+              helperText={emailError}
+            />
+            <TextField
+              fullWidth
+              type="password"
+              label="Password"
+              variant="outlined"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              error={!!passwordError}
+              helperText={passwordError}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleLogin}
+              sx={{ padding: 1, fontSize: "1rem", fontWeight: "bold", textTransform: "none" }}
+            >
+              Login
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }

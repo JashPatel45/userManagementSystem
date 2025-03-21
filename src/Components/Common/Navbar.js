@@ -12,11 +12,11 @@ export default function Navbar() {
     <AppBar position="sticky" sx={{ backgroundColor: "#5E9DD7" }}>
       <Container>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography variant="h6" sx={{ cursor: "pointer" }} onClick={() => handleNavigation("/")}>
+          <Typography variant="h6" sx={{ cursor: "pointer" }} onClick={() => handleNavigation("/dashboard")}>
             Demo
           </Typography>
           <div>
-            <Button color="inherit" onClick={() => handleNavigation("/")}>
+            <Button color="inherit" onClick={() => handleNavigation("/dashboard")}>
               Home
             </Button>
             <Button color="inherit" onClick={() => handleNavigation("/products")}>
@@ -24,6 +24,9 @@ export default function Navbar() {
             </Button>
             <Button color="inherit" onClick={() => handleNavigation("/users")}>
               Users
+            </Button>
+            <Button color="inherit" onClick={() => handleNavigation("/")}>
+              Logout
             </Button>
             {/* Add more buttons as needed */}
           </div>
